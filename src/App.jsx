@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaRegPlayCircle } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
 import { FaArrowLeft } from "react-icons/fa";
@@ -6,6 +6,7 @@ import { images } from "./constants/index";
 
 function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
   };
@@ -16,10 +17,32 @@ function App() {
   };
 
   const selectedImage = images[currentIndex];
+  const toggleSlideshow = () => {
+    setIsPlaying((prev) => !prev);
+  };
+
+  useEffect(() => {
+    let interval;
+
+    if (isPlaying) {
+      interval = setInterval(() => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+      }, 2000);
+    } else {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval); 
+  }, [isPlaying]);
+
 
   return (
     <main className="h-screen relative pt-28">
-      <button className="absolute right-64 top-10 text-yellow-600 hover:text-teal-500">
+      <button 
+        onClick={toggleSlideshow} 
+        className={`absolute right-64 top-10 text-yellow-600 hover:text-teal-500 ${
+          isPlaying ? "animate-pulse text-teal-500" : ""
+        }`}
+      >
         <FaRegPlayCircle />
       </button>
 
